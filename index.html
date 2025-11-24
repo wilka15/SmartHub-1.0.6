@@ -36,11 +36,12 @@
 
     .container {
       width: 90%;
-      max-width: 800px;
+      max-width: 900px;
       display: grid;
       grid-template-columns: 2fr 1fr;
-      gap: 16px;
+      gap: 20px;
       height: 90%;
+      box-sizing: border-box;
     }
 
     .chat-panel {
@@ -48,7 +49,8 @@
       border-radius: 12px;
       display: flex;
       flex-direction: column;
-      padding: 16px;
+      padding: 20px;
+      gap: 12px;
     }
     body.light .chat-panel {
       background: var(--panel-light);
@@ -64,15 +66,14 @@
     .chat-window {
       flex: 1;
       overflow-y: auto;
-      padding: 8px;
-      margin-top: 12px;
+      padding: 10px;
     }
 
     .msg {
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       display: flex;
       align-items: flex-start;
-      gap: 8px;
+      gap: 12px;
     }
 
     .msg.user {
@@ -80,7 +81,7 @@
     }
 
     .bubble {
-      max-width: 75%;
+      max-width: 70%;
       padding: 10px 14px;
       border-radius: 12px;
       background: var(--panel-dark);
@@ -102,20 +103,28 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .typing {
-      font-style: italic;
-      color: var(--accent);
-      margin-left: 8px;
+    .typing-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin: 0 2px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      animation: typing 1s infinite;
+    }
+    @keyframes typing {
+      0%, 80% { transform: translateY(0); opacity: 0.3; }
+      40% { transform: translateY(-4px); opacity: 1; }
     }
 
     .input-row {
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
+      gap: 10px;
+      margin-top: 10px;
     }
     .input-row input {
       flex: 1;
-      padding: 10px;
+      padding: 10px 12px;
       border-radius: 8px;
       border: none;
       outline: none;
@@ -134,11 +143,12 @@
       align-items: center;
       justify-content: center;
       font-size: 18px;
+      padding: 0 12px;
     }
     .btn.send {
-      padding: 0 16px;
       background: var(--accent);
       color: #002;
+      height: 44px;
     }
     .btn.small {
       width: 40px;
@@ -150,10 +160,10 @@
     .settings {
       background: var(--panel-dark);
       border-radius: 12px;
-      padding: 16px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
     body.light .settings {
       background: var(--panel-light);
@@ -168,7 +178,7 @@
     .field {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
     }
 
     .footer {
@@ -183,24 +193,24 @@
 <body>
   <div class="container">
     <div class="chat-panel">
-      <div class="chat-header">SmartHub AI v1.0.6</div>
+      <div class="chat-header">SmartHub AI v1.0.7</div>
       <div id="chat" class="chat-window"></div>
       <div class="input-row">
-        <input id="userInput" type="text" placeholder="Напиши сообщение..." />
+        <input id="userInput" type="text" placeholder="Напишите сообщение..." />
         <button class="btn send" id="sendBtn">➤</button>
         <button class="btn small" id="micBtn">🎤</button>
         <button class="btn small" id="speakBtn">🔊</button>
       </div>
-      <div class="footer">Версия 1.0.6</div>
+      <div class="footer">Версия 1.0.7</div>
     </div>
 
     <div class="settings">
-      <h3>Настройки</h3>
+      <h3>⚙ Настройки</h3>
       <div class="field">
-        <label><input type="checkbox" id="themeSwitch" /> Светлая тема</label>
+        <label><input type="checkbox" id="themeSwitch"> Светлая тема</label>
       </div>
       <div class="field">
-        <label for="voiceSelect">Озвучка:</label>
+        <label>Озвучка:</label>
         <select id="voiceSelect">
           <option value="female">Женский</option>
           <option value="male">Мужской</option>
@@ -219,14 +229,14 @@
 
     const chatEl = document.getElementById("chat");
 
-    function addMessage(text, role, isTyping = false) {
+    function addMessage(text, role, typing = false) {
       const wrap = document.createElement("div");
       wrap.className = "msg " + role;
       const bubble = document.createElement("div");
       bubble.className = "bubble";
-      if (isTyping) {
-        bubble.textContent = "...";
-        bubble.classList.add("typing");
+      if (typing) {
+        // показать индикатор точек
+        bubble.innerHTML = `<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>`;
       } else {
         bubble.textContent = text;
       }
@@ -242,8 +252,6 @@
       input.value = "";
 
       addMessage(text, "user");
-
-      // typing indicator
       addMessage("", "ai", true);
 
       try {
@@ -266,16 +274,15 @@
 
         lastAI = answer;
 
-        // удаляем индикатор набора
-        const lastMsg = chatEl.lastChild;
-        if (lastMsg) chatEl.removeChild(lastMsg);
+        // убираем typing-элемент
+        const last = chatEl.lastChild;
+        if (last) chatEl.removeChild(last);
 
         addMessage(answer, "ai");
-
       } catch (e) {
         console.error(e);
-        const lastMsg = chatEl.lastChild;
-        if (lastMsg) chatEl.removeChild(lastMsg);
+        const last = chatEl.lastChild;
+        if (last) chatEl.removeChild(last);
         addMessage("Ошибка сервера", "ai");
       }
     }
@@ -291,17 +298,12 @@
 
       if (voices.length === 0) voices = speechSynthesis.getVoices();
 
-      let voice = null;
-      if (selectedVoice === "male") {
-        voice = voices.find(v => /male|man/i.test(v.name));
-      } else {
-        voice = voices.find(v => /female|woman/i.test(v.name));
-      }
-      if (!voice) voice = voices[0];
+      let voice = voices.find(v =>
+        (selectedVoice === "male" ? /male|man/i : /female|woman/i).test(v.name)
+      ) || voices[0];
       utter.voice = voice;
 
       localStorage.setItem("voiceGender", selectedVoice);
-
       speechSynthesis.cancel();
       speechSynthesis.speak(utter);
     }
@@ -317,11 +319,11 @@
       rec.interimResults = false;
       rec.maxAlternatives = 1;
 
-      rec.onresult = (e) => {
+      rec.onresult = e => {
         const text = e.results[0][0].transcript;
         document.getElementById("userInput").value = text;
       };
-      rec.onerror = (e) => console.error("Ошибка распознавания:", e);
+      rec.onerror = e => console.error("Ошибка распознавания:", e);
       rec.start();
     }
 
@@ -340,9 +342,8 @@
     document.getElementById("micBtn").addEventListener("click", voiceInput);
     document.getElementById("clearBtn").addEventListener("click", clearChat);
     document.getElementById("themeSwitch").addEventListener("change", toggleTheme);
-    document.getElementById("voiceSelect").addEventListener("change", (e) => {
+    document.getElementById("voiceSelect").addEventListener("change", e => {
       selectedVoice = e.target.value;
-      localStorage.setItem("voiceGender", selectedVoice);
     });
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -350,7 +351,7 @@
       if (saved === "light") document.body.classList.add("light");
 
       voices = speechSynthesis.getVoices();
-      speechSynthesis.onvoiceschanged = () => voices = speechSynthesis.getVoices();
+      speechSynthesis.onvoiceschanged = () => (voices = speechSynthesis.getVoices());
 
       document.getElementById("voiceSelect").value = selectedVoice;
     });

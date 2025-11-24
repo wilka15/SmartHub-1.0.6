@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>SmartHub AI v1.0.5</title>
 
-  <!-- Красивый шрифт из Google Fonts -->
+  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
@@ -17,15 +17,15 @@
       --panel-dark: rgba(255,255,255,0.04);
       --panel-light: rgba(0,0,0,0.04);
       --accent: #00d4ff;
-      --font-family-base: 'Inter', system-ui, Arial, sans-serif;
+      --font: 'Inter', system-ui, Arial, sans-serif;
     }
     body {
       margin: 0;
-      font-family: var(--font-family-base);
+      font-family: var(--font);
       background: var(--bg-dark);
       color: var(--text-dark);
-      min-height: 100vh;
       transition: background 0.3s, color 0.3s;
+      min-height: 100vh;
     }
     body.light {
       background: var(--bg-light);
@@ -37,13 +37,12 @@
       grid-template-columns: 1fr 360px;
       gap: 18px;
       padding: 20px;
-      box-sizing: border-box;
       height: 100vh;
-      align-items: stretch;
+      box-sizing: border-box;
     }
 
     .panel {
-      background: linear-gradient(180deg, var(--panel-dark), var(--panel-dark));
+      background: var(--panel-dark);
       border-radius: 14px;
       padding: 18px;
       display: flex;
@@ -52,21 +51,21 @@
       box-shadow: 0 8px 30px rgba(0,0,0,0.6);
     }
     body.light .panel {
-      background: linear-gradient(180deg, var(--panel-light), var(--panel-light));
+      background: var(--panel-light);
     }
 
     .header {
       text-align: center;
-      font-weight: 700;
       font-size: 24px;
+      font-weight: 700;
       color: var(--accent);
     }
 
     .chat-window {
+      flex: 1;
       background: var(--panel-dark);
       border-radius: 10px;
       padding: 12px;
-      flex: 1;
       overflow-y: auto;
       min-height: 120px;
     }
@@ -76,37 +75,26 @@
 
     .msg {
       display: flex;
-      gap: 12px;
       align-items: flex-start;
+      gap: 12px;
       margin-bottom: 12px;
-    }
-    .msg .avatar {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      flex: 0 0 54px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
     }
     .bubble {
       padding: 12px 14px;
       border-radius: 12px;
       max-width: 78%;
       line-height: 1.35;
-      background: rgba(255,255,255,0.04);
+      background: var(--panel-dark);
       position: relative;
       overflow: hidden;
     }
-    .msg.user { justify-content: flex-end; flex-direction: row-reverse; }
     .msg.user .bubble {
       background: var(--accent);
       color: #002;
+      margin-left: auto;
     }
 
-    /* Анимация «печати» для ai-ответов */
+    /* Анимация печати */
     .bubble.typing::after {
       content: '';
       display: inline-block;
@@ -146,11 +134,11 @@
     }
     .icon-btn, .small-btn {
       cursor: pointer;
+      border: none;
+      border-radius: 10px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      border: none;
-      border-radius: 10px;
     }
     .icon-btn {
       width: 48px;
@@ -167,7 +155,7 @@
     }
 
     .settings {
-      background: linear-gradient(180deg, var(--panel-dark), var(--panel-dark));
+      background: var(--panel-dark);
       border-radius: 14px;
       padding: 18px;
       display: flex;
@@ -175,16 +163,15 @@
       gap: 12px;
     }
     body.light .settings {
-      background: linear-gradient(180deg, var(--panel-light), var(--panel-light));
+      background: var(--panel-light);
     }
-
-    .settings h3 { margin: 0; color: var(--accent); }
+    .settings h3 { color: var(--accent); margin: 0; font-size: 20px; }
     .field { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+
     .footer {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-top: 6px;
       font-size: 13px;
       opacity: .85;
     }
@@ -195,15 +182,15 @@
   <div class="app">
     <div class="panel">
       <div class="header">SmartHub AI</div>
-      <div id="chat" class="chat-window" aria-live="polite" role="log"></div>
+      <div id="chat" class="chat-window" role="log" aria-live="polite"></div>
       <div class="input-row">
         <input id="userInput" type="text" placeholder="Введите сообщение..." autocomplete="off" />
-        <button class="icon-btn" id="sendBtn" title="Отправить">➤</button>
-        <button class="small-btn" id="micBtn" title="Голосовой ввод">🎤</button>
-        <button class="small-btn" id="speakBtn" title="Озвучить">🔊</button>
+        <button class="icon-btn" id="sendBtn">➤</button>
+        <button class="small-btn" id="micBtn">🎤</button>
+        <button class="small-btn" id="speakBtn">🔊</button>
       </div>
       <div class="footer">
-        <div class="version">SmartHub AI v1.0.5</div>
+        <div class="version">SmartHub AI v1.0.6</div>
       </div>
     </div>
 
@@ -219,7 +206,9 @@
           <option value="male">Мужской</option>
         </select>
       </div>
-      <button id="clearBtn" style="padding:12px;background:#ff7b00;border:none;border-radius:10px;color:#001;font-weight:700;cursor:pointer">🗑 Очистить чат</button>
+      <button id="clearBtn" style="padding:12px;background:#ff7b00;color:#001;border:none;border-radius:10px;cursor:pointer;">
+        🗑 Очистить чат
+      </button>
     </aside>
   </div>
 
@@ -229,30 +218,22 @@
     let chatHistory = JSON.parse(localStorage.getItem('sh_chatHistory') || '[]');
     let lastAI = "";
     let voicesList = [];
-    let selectedVoiceGender = localStorage.getItem('sh_voice_gender') || 'female';
+    const savedVoice = localStorage.getItem('sh_voice_gender') || 'female';
 
     const chatEl = document.getElementById('chat');
+    const themeSwitch = document.getElementById('themeSwitch');
+    const voiceSelect = document.getElementById('voiceSelect');
 
     function renderMessage(text, role) {
       const wrap = document.createElement('div');
       wrap.className = 'msg ' + role;
-      const av = document.createElement('div'); av.className = 'avatar';
-      const img = document.createElement('img');
-      img.style.width = '54px'; img.style.height = '54px'; img.style.borderRadius = '50%';
-      img.src = role === 'user'
-        ? 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg"...`) // пользовательский аватар можно вставить
-        : 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg"...`);
-      av.appendChild(img);
-
       const bubble = document.createElement('div');
       bubble.className = 'bubble typing';
-      bubble.textContent = '';
-      wrap.appendChild(av);
-      wrap.appendChild(bubble);
-      chatEl.appendChild(wrap);
+      wrap.append(bubble);
+      chatEl.append(wrap);
       chatEl.scrollTop = chatEl.scrollHeight;
 
-      // Печатаем текст по буквам
+      // печать текста по буквам
       let i = 0;
       const interval = setInterval(() => {
         bubble.textContent += text.charAt(i);
@@ -266,14 +247,14 @@
       }, 30);
     }
 
-    function saveChatHistory() {
+    function saveHistory() {
       localStorage.setItem('sh_chatHistory', JSON.stringify(chatHistory));
     }
 
     function clearChat() {
-      if (!confirm("Очистить весь чат?")) return;
+      if (!confirm('Очистить чат?')) return;
       chatHistory = [];
-      saveChatHistory();
+      localStorage.removeItem('sh_chatHistory');
       chatEl.innerHTML = '';
       lastAI = '';
     }
@@ -282,95 +263,106 @@
       if (!text) return;
       const synth = window.speechSynthesis;
       const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = 'ru-RU';
+      utter.lang = 'ru-RU'; // задаём русский язык озвучки
 
-      const pref = document.getElementById('voiceSelect').value;
       let voice = voicesList.find(v => {
-        if (pref === 'male') return /male|man/i.test(v.name);
-        else return /female|woman/i.test(v.name);
-      }) || voicesList[0];
+        if (voiceSelect.value === 'male') {
+          return /male|man/i.test(v.name);
+        } else {
+          return /female|woman/i.test(v.name);
+        }
+      });
+      if (!voice && voicesList.length) {
+        // как fallback — голос любого языка
+        voice = voicesList[0];
+      }
       if (voice) utter.voice = voice;
 
-      localStorage.setItem('sh_voice_gender', pref);
+      localStorage.setItem('sh_voice_gender', voiceSelect.value);
       synth.cancel();
       synth.speak(utter);
     }
 
     function startSpeechToText() {
       const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!Rec) { alert("Голосовой ввод не поддерживается"); return; }
+      if (!Rec) {
+        alert("Голосовой ввод не поддерживается");
+        return;
+      }
       const rec = new Rec();
-      rec.lang = 'ru-RU';
-      rec.onresult = e => {
-        document.getElementById('userInput').value = e.results[0][0].transcript;
+      rec.lang = "ru-RU";
+      rec.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        document.getElementById('userInput').value = text;
       };
       rec.start();
     }
 
     async function sendMessage(text) {
-      // показываем “печатает” placeholder
+      // показываем “...” как печатающее
       renderMessage("...", "ai");
       try {
         const resp = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: "gpt-4o-mini", input: text })
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ model: "gpt-4o-mini", messages: [{ role: "user", content: text }] })
         });
         const data = await resp.json();
         let answer = "";
         if (data.choices && data.choices[0]?.message?.content) {
           answer = data.choices[0].message.content;
         } else {
-          answer = "Ошибка: неизвестный формат ответа";
+          answer = "Ошибка: непонятный ответ от сервера";
         }
         lastAI = answer;
         chatHistory.push({ role: "ai", text: answer });
-        saveChatHistory();
+        saveHistory();
 
-        // удаляем placeholder и показываем реальный ответ
+        // удаляем последнюю «typing» фразу и рендерим настоящий ответ
         chatEl.removeChild(chatEl.lastChild);
         renderMessage(answer, "ai");
-      } catch (err) {
-        console.error(err);
+      } catch (e) {
+        console.error(e);
         chatEl.removeChild(chatEl.lastChild);
         renderMessage("Ошибка сервера", "ai");
       }
     }
 
     document.getElementById('sendBtn').addEventListener('click', () => {
-      const txt = document.getElementById('userInput').value.trim();
+      const inp = document.getElementById('userInput');
+      const txt = inp.value.trim();
       if (!txt) return;
-      document.getElementById('userInput').value = "";
       chatHistory.push({ role: "user", text: txt });
-      saveChatHistory();
+      saveHistory();
       renderMessage(txt, "user");
+      inp.value = "";
       sendMessage(txt);
     });
-
     document.getElementById('micBtn').addEventListener('click', startSpeechToText);
     document.getElementById('speakBtn').addEventListener('click', () => speakText(lastAI));
+    document.getElementById('clearBtn').addEventListener('click', clearChat);
 
-    const themeSwitch = document.getElementById('themeSwitch');
     themeSwitch.addEventListener('change', () => {
-      const on = themeSwitch.checked;
-      document.body.classList.toggle("light", on);
-      localStorage.setItem('sh_theme_is_light', on ? '1' : '0');
+      document.body.classList.toggle('light', themeSwitch.checked);
+      localStorage.setItem('sh_theme_is_light', themeSwitch.checked ? '1' : '0');
     });
 
-    (function init(){
-      chatHistory.forEach(msg => renderMessage(msg.text, msg.role));
+    voiceSelect.value = savedVoice;
 
+    (function init() {
+      // восстановление чата
+      chatHistory.forEach(m => renderMessage(m.text, m.role));
+
+      // темы
+      const light = localStorage.getItem('sh_theme_is_light') === '1';
+      themeSwitch.checked = light;
+      document.body.classList.toggle('light', light);
+
+      // голоса
       voicesList = window.speechSynthesis.getVoices();
       window.speechSynthesis.onvoiceschanged = () => {
         voicesList = window.speechSynthesis.getVoices();
       };
-
-      const saved = localStorage.getItem('sh_theme_is_light') === '1';
-      themeSwitch.checked = saved;
-      document.body.classList.toggle("light", saved);
-
-      const vsel = document.getElementById('voiceSelect');
-      vsel.value = selectedVoiceGender;
     })();
   </script>
 </body>
